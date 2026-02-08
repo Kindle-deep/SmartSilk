@@ -1,12 +1,13 @@
 // app/page.tsx
+import Image from "next/image";
 import { GlobalSearch } from "@/components/search/GlobalSearch";
-import { Sparkles, Globe, Tv, ShoppingBag, Compass, ArrowUpRight } from "lucide-react";
+import { Compass, ArrowUpRight } from "lucide-react";
 
 const MENU = [
-  { title: "AI路线规划", icon: Sparkles, color: "bg-indigo-500", href: "/route" },
-  { title: "各国非遗", icon: Globe, color: "bg-pink-500", href: "/heritage" },
-  { title: "虚拟漫游", icon: Tv, color: "bg-cyan-500", href: "/virtual" },
-  { title: "文创商城", icon: ShoppingBag, color: "bg-emerald-500", href: "/shop" },
+  { title: "AI路线规划", icon: "/images/route.jpg", href: "/route" },
+  { title: "各国非遗", icon: "/images/heritage.jpg", href: "/heritage" },
+  { title: "虚拟漫游", icon: "/images/ar.jpg", href: "/virtual" },
+  { title: "文创商城", icon: "/images/shop.jpg", href: "/shop" },
 ];
 
 const HERO_STATS = [
@@ -78,8 +79,14 @@ export default function HomePage() {
       <div className="px-4 grid grid-cols-2 gap-4">
         {MENU.map((item) => (
           <a href={item.href} key={item.title} className="bg-white p-4 rounded-2xl shadow-sm flex flex-col items-center border border-slate-50 active:scale-95 transition-transform">
-            <div className={`${item.color} p-3 rounded-2xl mb-2 text-white`}>
-              <item.icon className="w-6 h-6" />
+            <div className="mb-2 flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl bg-slate-900/5">
+              <Image
+                src={item.icon}
+                alt={item.title}
+                width={64}
+                height={64}
+                className="h-16 w-16 object-cover"
+              />
             </div>
             <span className="font-bold text-sm">{item.title}</span>
           </a>
