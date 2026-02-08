@@ -60,6 +60,27 @@ export default function HomePage() {
             </a>
           </div>
 
+          <div className="mt-8 grid grid-cols-2 gap-4">
+            {MENU.map((item) => (
+              <a
+                href={item.href}
+                key={item.title}
+                className="flex flex-col items-center rounded-2xl border border-white/60 bg-white/70 p-4 text-slate-900 shadow-sm backdrop-blur active:scale-95 transition-transform"
+              >
+                <div className="mb-2 flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl bg-slate-900/5">
+                  <Image
+                    src={item.icon}
+                    alt={item.title}
+                    width={64}
+                    height={64}
+                    className="h-16 w-16 object-cover"
+                  />
+                </div>
+                <span className="text-sm font-bold">{item.title}</span>
+              </a>
+            ))}
+          </div>
+
           <div className="mt-10 flex flex-col gap-4 rounded-3xl border border-white/40 bg-white/50 p-4 backdrop-blur">
             <div className="grid grid-cols-3 text-center text-sm font-semibold text-slate-900">
               {HERO_STATS.map((stat) => (
@@ -76,22 +97,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      <div className="px-4 grid grid-cols-2 gap-4">
-        {MENU.map((item) => (
-          <a href={item.href} key={item.title} className="bg-white p-4 rounded-2xl shadow-sm flex flex-col items-center border border-slate-50 active:scale-95 transition-transform">
-            <div className="mb-2 flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl bg-slate-900/5">
-              <Image
-                src={item.icon}
-                alt={item.title}
-                width={64}
-                height={64}
-                className="h-16 w-16 object-cover"
-              />
-            </div>
-            <span className="font-bold text-sm">{item.title}</span>
-          </a>
-        ))}
-      </div>
     </main>
   );
 }
