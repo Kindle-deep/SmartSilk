@@ -6,7 +6,7 @@ import { BottomNav } from "@/components/layout/BottomNav";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "东欧非遗之旅 - 智汇丝韵",
+  title: "智汇丝韵",
   description: "基于AI的非遗文化深度旅游平台",
 };
 
