@@ -55,38 +55,6 @@ export function GlobalSearch() {
         <CommandList>
           <CommandEmpty>未找到相关结果。</CommandEmpty>
           
-          <CommandGroup heading="精选路线">
-            <CommandItem onSelect={() => runCommand(() => router.push("/route"))}>
-              <Map className="mr-2 h-4 w-4" />
-              <span>巴尔干半岛探秘 7 日游</span>
-            </CommandItem>
-            <CommandItem onSelect={() => runCommand(() => router.push("/route"))}>
-              <Map className="mr-2 h-4 w-4" />
-              <span>多瑙河沿岸非遗考察</span>
-            </CommandItem>
-          </CommandGroup>
-
-          <CommandSeparator />
-
-          <CommandGroup heading="文创产品">
-            <CommandItem onSelect={() => runCommand(() => router.push("/shop"))}>
-              <ShoppingBag className="mr-2 h-4 w-4" />
-              <span>捷克手工水晶杯</span>
-            </CommandItem>
-            <CommandItem onSelect={() => runCommand(() => router.push("/shop"))}>
-              <ShoppingBag className="mr-2 h-4 w-4" />
-              <span>塞尔维亚刺绣桌布</span>
-            </CommandItem>
-          </CommandGroup>
-
-          <CommandSeparator />
-
-          <CommandGroup heading="快速导航">
-            <CommandItem onSelect={() => runCommand(() => router.push("/virtual"))}>
-              <Globe className="mr-2 h-4 w-4" />
-              <span>进入虚拟漫游</span>
-            </CommandItem>
-          </CommandGroup>
         </CommandList>
       </CommandDialog>
     </>

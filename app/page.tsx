@@ -1,6 +1,9 @@
 // app/page.tsx
 import Image from "next/image";
+import Link from "next/link";
 import { GlobalSearch } from "@/components/search/GlobalSearch";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Compass, ArrowUpRight } from "lucide-react";
 
 const MENU = [
@@ -95,6 +98,22 @@ export default function HomePage() {
             </p>
           </div>
         </div>
+      </section>
+
+      <section className="px-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>旅行实用工具</CardTitle>
+            <CardDescription>
+              在工具页可查询当地天气、汇率，并快速查看旅游投诉与紧急救援热线。
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button asChild>
+              <Link href="/tools">前往工具页</Link>
+            </Button>
+          </CardContent>
+        </Card>
       </section>
 
     </main>
