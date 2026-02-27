@@ -177,7 +177,7 @@ export default function ToolsPage() {
 		return () => {
 			active = false;
 		};
-	}, []);
+	}, [fromCurrency, toCurrency]);
 
 	const searchWeather = async () => {
 		if (!city.trim()) {

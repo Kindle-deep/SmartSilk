@@ -4,18 +4,13 @@ import * as React from "react";
 import {
   CommandDialog,
   CommandEmpty,
-  CommandGroup,
   CommandInput,
-  CommandItem,
   CommandList,
-  CommandSeparator,
 } from "@/components/ui/command";
-import { Search, Map, ShoppingBag, Globe, ArrowRight } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { Search } from "lucide-react";
 
 export function GlobalSearch() {
   const [open, setOpen] = React.useState(false);
-  const router = useRouter();
 
   // 监听快捷键 Cmd+K 或 Ctrl+K (适配 Web 端习惯)
   React.useEffect(() => {
@@ -28,11 +23,6 @@ export function GlobalSearch() {
     document.addEventListener("keydown", down);
     return () => document.removeEventListener("keydown", down);
   }, []);
-
-  const runCommand = (command: () => void) => {
-    setOpen(false);
-    command();
-  };
 
   return (
     <>

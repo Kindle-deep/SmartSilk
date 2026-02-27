@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -88,18 +89,18 @@ type PaymentLaunch = {
 const LOCAL_CATEGORIES: Category[] = [
   {
     id: 1,
-    slug: "silk-scarf",
-    name: { "zh-CN": "丝巾", "en-US": "Silk Scarf" },
+    slug: "europe-handmade",
+    name: { "zh-CN": "手工纪念", "en-US": "Handmade Souvenirs" },
   },
   {
     id: 2,
-    slug: "tea-set",
-    name: { "zh-CN": "茶具", "en-US": "Tea Set" },
+    slug: "europe-snacks",
+    name: { "zh-CN": "风味食品", "en-US": "European Snacks" },
   },
   {
     id: 3,
-    slug: "culture-gift",
-    name: { "zh-CN": "文创礼品", "en-US": "Cultural Gift" },
+    slug: "europe-lifestyle",
+    name: { "zh-CN": "生活器物", "en-US": "Lifestyle Items" },
   },
 ];
 
@@ -107,74 +108,84 @@ const LOCAL_PRODUCTS: Product[] = [
   {
     id: 101,
     category_id: 1,
-    slug: "jiangnan-silk-scarf",
-    title: { "zh-CN": "江南纹样真丝方巾" },
-    description: { "zh-CN": "100%桑蚕丝，适合日常搭配。" },
-    price_amount: "299.00",
-    promotion_price_amount: "249.00",
+    slug: "czech-handpainted-magnet-set",
+    title: { "zh-CN": "捷克手绘城市冰箱贴（3枚）" },
+    description: { "zh-CN": "布拉格老城主题，小体积易携带，适合送礼。" },
+    price_amount: "59.00",
+    promotion_price_amount: "49.00",
     price_currency: "CNY",
-    images: ["/images/shop.jpg"],
-    tags: ["热卖"],
+    images: ["/images/shop/czech-magnet.jpg"],
+    tags: ["捷克", "热卖"],
     fulfillment_type: "manual",
   },
   {
     id: 102,
-    category_id: 2,
-    slug: "ruyao-tea-cup",
-    title: { "zh-CN": "汝窑开片茶杯" },
-    description: { "zh-CN": "手工烧制，温润如玉。" },
-    price_amount: "168.00",
+    category_id: 1,
+    slug: "hungary-danube-postcard-box",
+    title: { "zh-CN": "匈牙利多瑙河明信片礼盒" },
+    description: { "zh-CN": "含布达佩斯经典景点卡片，附封蜡贴纸。" },
+    price_amount: "45.00",
     price_currency: "CNY",
-    images: ["/images/shop.jpg"],
-    tags: ["新品"],
+    images: ["/images/shop/hungary-postcard.jpg"],
+    tags: ["匈牙利", "旅行"],
     fulfillment_type: "manual",
   },
   {
     id: 103,
-    category_id: 3,
-    slug: "heritage-bookmark",
-    title: { "zh-CN": "非遗主题金属书签" },
-    description: { "zh-CN": "轻便礼赠，适合收藏。" },
-    price_amount: "49.00",
+    category_id: 2,
+    slug: "italy-pasta-gift-pack",
+    title: { "zh-CN": "意大利螺旋意面礼装（500g）" },
+    description: { "zh-CN": "日常烹饪友好，适合家庭备餐与伴手礼。" },
+    price_amount: "39.00",
     price_currency: "CNY",
-    images: ["/images/shop.jpg"],
-    tags: ["文创"],
+    images: ["/images/shop/italy-pasta.jpg"],
+    tags: ["意大利", "食品"],
     fulfillment_type: "manual",
   },
   {
     id: 104,
-    category_id: 1,
-    slug: "cloud-brocade-scarf",
-    title: { "zh-CN": "云锦提花长巾" },
-    description: { "zh-CN": "经典纹样，四季可用。" },
-    price_amount: "398.00",
-    promotion_price_amount: "329.00",
+    category_id: 2,
+    slug: "greece-herb-sea-salt",
+    title: { "zh-CN": "希腊香草海盐调味罐" },
+    description: { "zh-CN": "地中海风味，适配沙拉、牛排和烤蔬菜。" },
+    price_amount: "36.00",
     price_currency: "CNY",
-    images: ["/images/shop.jpg"],
-    tags: ["限时"],
+    images: ["/images/shop/greece-sea-salt.jpg"],
+    tags: ["希腊", "厨房"],
+    fulfillment_type: "manual",
+  },
+  {
+    id: 105,
+    category_id: 3,
+    slug: "bosnia-copper-coffee-spoon",
+    title: { "zh-CN": "波黑铜柄咖啡勺" },
+    description: { "zh-CN": "莫斯塔尔古桥主题雕纹，小巧实用。" },
+    price_amount: "68.00",
+    promotion_price_amount: "55.00",
+    price_currency: "CNY",
+    images: ["/images/shop/bosnia-coffee-spoon.jpg"],
+    tags: ["波黑", "手作"],
+    fulfillment_type: "manual",
+  },
+  {
+    id: 106,
+    category_id: 3,
+    slug: "poland-amber-keychain",
+    title: { "zh-CN": "波兰琥珀风钥匙挂件" },
+    description: { "zh-CN": "轻便耐用，通勤钥匙与背包都可搭配。" },
+    price_amount: "29.00",
+    price_currency: "CNY",
+    images: ["/images/shop/poland-amber-keychain.jpg"],
+    tags: ["波兰", "日常"],
     fulfillment_type: "manual",
   },
 ];
 
 const API_BASE = (process.env.NEXT_PUBLIC_DUJIAO_API_BASE_URL || "/api/v1").replace(/\/$/, "");
-const API_ORIGIN = (() => {
-  if (/^https?:\/\//.test(API_BASE)) {
-    try {
-      return new URL(API_BASE).origin;
-    } catch {
-      return "";
-    }
-  }
-  return "";
-})();
 
 function resolveProductImage(path?: string) {
   if (!path) return "";
-  if (/^https?:\/\//.test(path)) {
-    return path;
-  }
-  const normalized = path.startsWith("/") ? path : `/${path}`;
-  return API_ORIGIN ? `${API_ORIGIN}${normalized}` : normalized;
+  return path.startsWith("/") ? path : `/${path}`;
 }
 
 function getLocaleText(text?: LocaleText) {
@@ -405,11 +416,13 @@ export default function ShopPage() {
           >
             <div className="aspect-square bg-slate-200 relative overflow-hidden">
               {resolveProductImage(product.images?.[0]) ? (
-                <img
+                <Image
                   src={resolveProductImage(product.images?.[0])}
                   alt={getLocaleText(product.title)}
-                  className="h-full w-full object-cover"
-                  loading="lazy"
+                  fill
+                  sizes="(max-width: 768px) 50vw, 25vw"
+                  className="object-cover"
+                  unoptimized
                 />
               ) : (
                 <div className="flex h-full w-full items-center justify-center text-xs uppercase tracking-[0.3em] text-slate-400">

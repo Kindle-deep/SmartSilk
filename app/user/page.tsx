@@ -287,38 +287,39 @@ export default function UserPage() {
   );
 
   return (
-    <div className="pb-24">
-      <div className="relative bg-gradient-to-br from-[#667eea] to-[#764ba2] h-48 flex flex-col justify-end px-6 pb-6 text-white">
-        <div className="flex items-start justify-between gap-6">
+    <div className="min-h-screen bg-slate-50 pb-24">
+      <div className="relative h-52 rounded-b-3xl bg-gradient-to-b from-slate-900 to-slate-800 px-6 pb-6 pt-10 text-white shadow-sm">
+        <div className="absolute inset-0 rounded-b-3xl bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.16),transparent_40%)]" />
+        <div className="relative flex items-start justify-between gap-6">
           <button
             type="button"
             onClick={() => setDrawerOpen(true)}
-            className="flex items-center gap-4 rounded-xl transition hover:bg-white/10 p-1"
+            className="flex items-center gap-4 rounded-xl p-1 transition hover:bg-white/10"
           >
-            <Avatar className="h-16 w-16 border-2 border-white/50">
+            <Avatar className="h-14 w-14 border border-white/40">
               <AvatarImage src="/avatar-placeholder.png" />
-              <AvatarFallback className="bg-white/20 text-white">
+              <AvatarFallback className="bg-white/20 text-white text-sm">
                 {user?.nickname?.[0] ?? "访"}
               </AvatarFallback>
             </Avatar>
             <div className="space-y-1 text-left">
-              <h2 className="text-xl font-bold">
+              <h2 className="text-lg font-semibold">
                 {user?.nickname ?? "非遗探索者"}
               </h2>
-              <p className="text-xs text-white/70">
+              <p className="text-xs text-white/75">
                 {user ? `UID: ${user.id}` : "点击头像登录"}
               </p>
             </div>
           </button>
           <div className="flex flex-col items-end gap-2">
-            <Badge variant={user ? "secondary" : "outline"}>
+            <Badge className="border-white/20 bg-white/15 text-white hover:bg-white/15" variant="outline">
               {user ? "已登录" : "游客"}
             </Badge>
             {user && (
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-white/80 hover:text-white"
+                className="h-8 text-white/80 hover:bg-white/10 hover:text-white"
                 onClick={handleLogout}
               >
                 <LogOut className="size-4" /> 退出登录
@@ -328,9 +329,9 @@ export default function UserPage() {
         </div>
       </div>
 
-      <div className="px-4 -mt-6 space-y-6 max-w-5xl mx-auto">
-        <Card className="border-none shadow-md">
-          <CardContent className="grid grid-cols-4 gap-2 py-4 px-2">
+      <div className="mx-auto -mt-7 max-w-5xl space-y-4 px-4">
+        <Card className="rounded-2xl border-slate-200/80 shadow-sm">
+          <CardContent className="grid grid-cols-4 gap-2 p-3">
             {[
               { label: "订单", icon: Package },
               { label: "收藏", icon: Heart },
@@ -339,48 +340,52 @@ export default function UserPage() {
             ].map((item) => (
               <button
                 key={item.label}
-                className="flex flex-col items-center gap-2 hover:bg-slate-50 py-2 rounded-lg transition-colors"
+                className="flex flex-col items-center gap-2 rounded-xl py-2.5 transition-colors hover:bg-slate-100"
                 type="button"
                 onClick={() => handleQuickAction(item.label)}
               >
-                <item.icon className="w-5 h-5 text-slate-600" />
-                <span className="text-xs font-medium">{item.label}</span>
+                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100">
+                  <item.icon className="h-4.5 w-4.5 text-slate-600" />
+                </span>
+                <span className="text-xs font-medium text-slate-700">{item.label}</span>
               </button>
             ))}
           </CardContent>
         </Card>
 
         {statusMessage && (
-          <p className={`px-1 text-sm ${statusClassName}`}>{statusMessage.text}</p>
+          <p className={`rounded-xl border bg-white px-3 py-2 text-sm shadow-sm ${statusClassName}`}>{statusMessage.text}</p>
         )}
 
-        <Card className="border-none shadow-sm overflow-hidden">
+        <Card className="overflow-hidden rounded-2xl border-slate-200/80 shadow-sm">
           {[{ label: "多语言设置", icon: Settings, sub: "简体中文" }, { label: "关于智汇丝韵", icon: HelpCircle, sub: "v2.0.1" }].map((item, index) => (
             <div key={item.label}>
-              <button className="w-full flex items-center justify-between gap-3 p-4 hover:bg-slate-50 transition-colors" type="button">
+              <button className="flex w-full items-center justify-between gap-3 p-4 transition-colors hover:bg-slate-50" type="button">
                 <div className="flex items-center gap-3">
-                  <item.icon className="w-5 h-5 text-slate-400" />
-                  <span className="text-sm font-medium">{item.label}</span>
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100">
+                    <item.icon className="h-4 w-4 text-slate-500" />
+                  </span>
+                  <span className="text-sm font-medium text-slate-800">{item.label}</span>
                 </div>
                 <div className="flex items-center gap-1 text-slate-400">
                   <span className="text-xs">{item.sub}</span>
                   <ChevronRight className="w-4 h-4" />
                 </div>
               </button>
-              {index === 0 && <Separator className="bg-slate-50" />}
+              {index === 0 && <Separator className="bg-slate-100" />}
             </div>
           ))}
         </Card>
       </div>
 
       <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
-        <DrawerContent className="gap-4">
+        <DrawerContent className="gap-4 rounded-t-3xl">
           <DrawerHeader className="text-left">
             <div className="flex items-start justify-between gap-3">
               <div>
                 <DrawerTitle>登录 / 注册</DrawerTitle>
                 <DrawerDescription>
-                  通过 Dujiao Next 账号同步订单与会员权益。
+                  登录后可同步订单与会员权益。
                 </DrawerDescription>
               </div>
               <Button variant="ghost" size="sm" onClick={() => setDrawerOpen(false)}>
@@ -388,9 +393,9 @@ export default function UserPage() {
               </Button>
             </div>
           </DrawerHeader>
-          <div className="px-4">
+          <div className="px-4 pb-4">
             <Tabs defaultValue="login">
-              <TabsList>
+              <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="login">登录</TabsTrigger>
                 <TabsTrigger value="register">注册</TabsTrigger>
               </TabsList>

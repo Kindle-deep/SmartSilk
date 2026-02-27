@@ -17,7 +17,6 @@ import {
 	Sparkles,
 	BrainCircuit,
 	Clock,
-	ArrowRight,
 } from "lucide-react";
 
 const metaSummary = [
