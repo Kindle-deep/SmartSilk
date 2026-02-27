@@ -85,6 +85,77 @@ type PaymentLaunch = {
   qr_code?: string;
 };
 
+const LOCAL_CATEGORIES: Category[] = [
+  {
+    id: 1,
+    slug: "silk-scarf",
+    name: { "zh-CN": "丝巾", "en-US": "Silk Scarf" },
+  },
+  {
+    id: 2,
+    slug: "tea-set",
+    name: { "zh-CN": "茶具", "en-US": "Tea Set" },
+  },
+  {
+    id: 3,
+    slug: "culture-gift",
+    name: { "zh-CN": "文创礼品", "en-US": "Cultural Gift" },
+  },
+];
+
+const LOCAL_PRODUCTS: Product[] = [
+  {
+    id: 101,
+    category_id: 1,
+    slug: "jiangnan-silk-scarf",
+    title: { "zh-CN": "江南纹样真丝方巾" },
+    description: { "zh-CN": "100%桑蚕丝，适合日常搭配。" },
+    price_amount: "299.00",
+    promotion_price_amount: "249.00",
+    price_currency: "CNY",
+    images: ["/images/shop.jpg"],
+    tags: ["热卖"],
+    fulfillment_type: "manual",
+  },
+  {
+    id: 102,
+    category_id: 2,
+    slug: "ruyao-tea-cup",
+    title: { "zh-CN": "汝窑开片茶杯" },
+    description: { "zh-CN": "手工烧制，温润如玉。" },
+    price_amount: "168.00",
+    price_currency: "CNY",
+    images: ["/images/shop.jpg"],
+    tags: ["新品"],
+    fulfillment_type: "manual",
+  },
+  {
+    id: 103,
+    category_id: 3,
+    slug: "heritage-bookmark",
+    title: { "zh-CN": "非遗主题金属书签" },
+    description: { "zh-CN": "轻便礼赠，适合收藏。" },
+    price_amount: "49.00",
+    price_currency: "CNY",
+    images: ["/images/shop.jpg"],
+    tags: ["文创"],
+    fulfillment_type: "manual",
+  },
+  {
+    id: 104,
+    category_id: 1,
+    slug: "cloud-brocade-scarf",
+    title: { "zh-CN": "云锦提花长巾" },
+    description: { "zh-CN": "经典纹样，四季可用。" },
+    price_amount: "398.00",
+    promotion_price_amount: "329.00",
+    price_currency: "CNY",
+    images: ["/images/shop.jpg"],
+    tags: ["限时"],
+    fulfillment_type: "manual",
+  },
+];
+
 const API_BASE = (process.env.NEXT_PUBLIC_DUJIAO_API_BASE_URL || "/api/v1").replace(/\/$/, "");
 const API_ORIGIN = (() => {
   if (/^https?:\/\//.test(API_BASE)) {
@@ -132,12 +203,11 @@ async function dujiaoFetch<T>(path: string, init?: RequestInit): Promise<T> {
 }
 
 export default function ShopPage() {
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>(LOCAL_CATEGORIES);
+  const [products] = useState<Product[]>(LOCAL_PRODUCTS);
   const [channels, setChannels] = useState<PaymentChannel[]>([]);
   const [activeCategoryId, setActiveCategoryId] = useState<number | "all">("all");
   const [keyword, setKeyword] = useState("");
-  const [loadingProducts, setLoadingProducts] = useState(false);
   const [loadingBase, setLoadingBase] = useState(true);
   const [error, setError] = useState("");
 
@@ -159,19 +229,36 @@ export default function ShopPage() {
     [selectedProduct]
   );
 
+  const filteredProducts = useMemo(() => {
+    const keywordText = keyword.trim().toLowerCase();
+    return products.filter((product) => {
+      const matchCategory = activeCategoryId === "all" || product.category_id === activeCategoryId;
+      if (!matchCategory) {
+        return false;
+      }
+
+      if (!keywordText) {
+        return true;
+      }
+
+      const title = getLocaleText(product.title).toLowerCase();
+      const description = getLocaleText(product.description).toLowerCase();
+      return title.includes(keywordText) || description.includes(keywordText);
+    });
+  }, [activeCategoryId, keyword, products]);
+
   useEffect(() => {
     const loadBaseData = async () => {
       setLoadingBase(true);
       setError("");
       try {
-        const [categoryData, configData] = await Promise.all([
-          dujiaoFetch<Category[]>("/public/categories"),
-          dujiaoFetch<SiteConfig>("/public/config"),
-        ]);
-        setCategories(categoryData);
+        const configData = await dujiaoFetch<SiteConfig>("/public/config");
+        setCategories(LOCAL_CATEGORIES);
         setChannels(configData.payment_channels || []);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "初始化数据加载失败");
+        setCategories(LOCAL_CATEGORIES);
+        setChannels([]);
+        setError(err instanceof Error ? err.message : "基础数据加载失败");
       } finally {
         setLoadingBase(false);
       }
@@ -180,36 +267,7 @@ export default function ShopPage() {
     loadBaseData();
   }, []);
 
-  useEffect(() => {
-    const timer = setTimeout(async () => {
-      setLoadingProducts(true);
-      setError("");
-      try {
-        const params = new URLSearchParams({
-          page: "1",
-          page_size: "20",
-        });
-
-        if (activeCategoryId !== "all") {
-          params.set("category_id", String(activeCategoryId));
-        }
-        if (keyword.trim()) {
-          params.set("search", keyword.trim());
-        }
-
-        const productData = await dujiaoFetch<Product[]>(`/public/products?${params.toString()}`);
-        setProducts(productData);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "商品加载失败");
-      } finally {
-        setLoadingProducts(false);
-      }
-    }, 300);
-
-    return () => clearTimeout(timer);
-  }, [activeCategoryId, keyword]);
-
-  const openCheckout = async (product: Product) => {
+  const openCheckout = (product: Product) => {
     setCheckoutError("");
     setPaymentResult(null);
     setOrderId(null);
@@ -219,13 +277,6 @@ export default function ShopPage() {
     setSelectedProduct(product);
     setSelectedChannelId(channels[0]?.id || null);
     setDrawerOpen(true);
-
-    try {
-      const detail = await dujiaoFetch<Product>(`/public/products/${product.slug}`);
-      setSelectedProduct(detail);
-    } catch {
-      // 详情失败时回退使用列表数据
-    }
   };
 
   const handleCreateOrderAndPay = async () => {
@@ -339,14 +390,14 @@ export default function ShopPage() {
         <div className="px-4 py-3 text-sm text-red-500">{error}</div>
       ) : null}
 
-      {loadingBase || loadingProducts ? (
+      {loadingBase ? (
         <div className="p-6 flex items-center justify-center text-slate-500 text-sm">
           <Loader2 className="w-4 h-4 mr-2 animate-spin" /> 数据加载中...
         </div>
       ) : null}
 
       <div className="grid grid-cols-2 gap-3 p-4">
-        {products.map((product) => (
+        {filteredProducts.map((product) => (
           <Card
             key={product.id}
             className="border-none shadow-sm overflow-hidden group cursor-pointer"
@@ -391,7 +442,7 @@ export default function ShopPage() {
         ))}
       </div>
 
-      {!loadingProducts && products.length === 0 ? (
+      {!loadingBase && filteredProducts.length === 0 ? (
         <div className="px-4 py-8 text-center text-sm text-slate-500">暂无商品</div>
       ) : null}
 
