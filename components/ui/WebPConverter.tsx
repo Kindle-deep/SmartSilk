@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { fileToWebP } from '@/lib/convertToWebP';
 
-export default function WebPConverter(): JSX.Element {
+export default function WebPConverter() {
   const [origUrl, setOrigUrl] = useState<string | null>(null);
   const [webpUrl, setWebpUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
