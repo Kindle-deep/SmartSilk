@@ -19,6 +19,10 @@ const HERO_STATS = [
   { label: "实时讲解", value: "24/7" },
 ];
 
+function toWebpApiUrl(src: string, width = 128, quality = 75) {
+  return `/api/image/webp?src=${encodeURIComponent(src)}&w=${width}&quality=${quality}`;
+}
+
 export default function HomePage() {
   return (
     <main className="space-y-10 pb-16">
@@ -72,7 +76,7 @@ export default function HomePage() {
               >
                 <div className="mb-2 flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl bg-slate-900/5">
                   <Image
-                    src={item.icon}
+                    src={toWebpApiUrl(item.icon, 128, 75)}
                     alt={item.title}
                     width={64}
                     height={64}

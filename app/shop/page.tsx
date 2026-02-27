@@ -188,6 +188,12 @@ function resolveProductImage(path?: string) {
   return path.startsWith("/") ? path : `/${path}`;
 }
 
+function toWebpApiUrl(src?: string, width = 640, quality = 72) {
+  const resolved = resolveProductImage(src);
+  if (!resolved) return "";
+  return `/api/image/webp?src=${encodeURIComponent(resolved)}&w=${width}&quality=${quality}`;
+}
+
 function getLocaleText(text?: LocaleText) {
   if (!text) return "";
   return text["zh-CN"] || text["zh"] || text["en-US"] || Object.values(text)[0] || "";
@@ -408,7 +414,7 @@ export default function ShopPage() {
       ) : null}
 
       <div className="grid grid-cols-2 gap-3 p-4">
-        {filteredProducts.map((product) => (
+        {filteredProducts.map((product, index) => (
           <Card
             key={product.id}
             className="border-none shadow-sm overflow-hidden group cursor-pointer"
@@ -417,12 +423,12 @@ export default function ShopPage() {
             <div className="aspect-square bg-slate-200 relative overflow-hidden">
               {resolveProductImage(product.images?.[0]) ? (
                 <Image
-                  src={resolveProductImage(product.images?.[0])}
+                  src={toWebpApiUrl(product.images?.[0], 560, 72)}
                   alt={getLocaleText(product.title)}
                   fill
                   sizes="(max-width: 768px) 50vw, 25vw"
                   className="object-cover"
-                  unoptimized
+                  priority={index < 4}
                 />
               ) : (
                 <div className="flex h-full w-full items-center justify-center text-xs uppercase tracking-[0.3em] text-slate-400">

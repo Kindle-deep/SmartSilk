@@ -171,6 +171,10 @@ const heritageList = [
 
 const CATEGORIES = ["全部", "手工艺", "音乐舞蹈", "饮食文化", "节庆仪式", "传统知识"];
 
+function toWebpApiUrl(src: string, width = 960, quality = 72) {
+  return `/api/image/webp?src=${encodeURIComponent(src)}&w=${width}&quality=${quality}`;
+}
+
 export default function HeritagePage() {
   const [activeTab, setActiveTab] = useState("全部");
   const [selectedItem, setSelectedItem] = useState<typeof heritageList[0] | null>(null);
@@ -260,7 +264,7 @@ export default function HeritagePage() {
           </div>
         )}
 
-        {filteredHeritage.map((item) => (
+        {filteredHeritage.map((item, index) => (
           <Drawer key={item.id}>
             {/* 使用 DrawerTrigger 包裹卡片 */}
             <DrawerTrigger asChild>
@@ -269,7 +273,14 @@ export default function HeritagePage() {
                 onClick={() => setSelectedItem(item)}
               >
                 <div className="relative aspect-[4/3]">
-                  <Image src={item.image} alt={item.name} fill className="object-cover" />
+                  <Image
+                    src={toWebpApiUrl(item.image, 960, 72)}
+                    alt={item.name}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
+                    priority={index < 2}
+                  />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent" />
                   <div className="absolute bottom-4 left-5 right-5 text-white">
                     <div className="flex items-center gap-2 text-[11px] uppercase tracking-wide text-white/70">
@@ -331,7 +342,13 @@ export default function HeritagePage() {
                   <div className="space-y-8">
                     {/* 顶部图片展示 */}
                     <div className="relative h-56 w-full rounded-[32px] overflow-hidden shadow-inner">
-                      <Image src={selectedItem.image} alt={selectedItem.name} fill className="object-cover" />
+                      <Image
+                        src={toWebpApiUrl(selectedItem.image, 1200, 74)}
+                        alt={selectedItem.name}
+                        fill
+                        className="object-cover"
+                        sizes="100vw"
+                      />
                       <div className="absolute top-4 left-4">
                          <Badge className="bg-black/20 backdrop-blur-md border-none text-white text-[10px]">
                            <Calendar className="w-3 h-3 mr-1" /> {selectedItem.year} 年入选

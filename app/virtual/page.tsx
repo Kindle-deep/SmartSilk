@@ -63,13 +63,24 @@ const REAL_SITES: SiteItem[] = [
   },
 ];
 
+function toWebpApiUrl(src: string, width = 1200, quality = 72) {
+  return `/api/image/webp?src=${encodeURIComponent(src)}&w=${width}&quality=${quality}`;
+}
+
 function SiteList({ items }: { items: SiteItem[] }) {
   return (
     <div className="grid gap-4">
-      {items.map((item) => (
+      {items.map((item, index) => (
         <Card key={item.id} className="overflow-hidden">
           <div className="relative h-48 w-full">
-            <Image src={item.image} alt={item.title} fill className="object-cover" sizes="100vw" />
+            <Image
+              src={toWebpApiUrl(item.image, 1200, 72)}
+              alt={item.title}
+              fill
+              className="object-cover"
+              sizes="100vw"
+              priority={index === 0}
+            />
             <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/15 to-transparent" />
             <div className="absolute left-4 bottom-4 right-4">
               <p className="text-white text-sm font-semibold line-clamp-2">{item.title}</p>
